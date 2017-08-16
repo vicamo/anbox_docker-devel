@@ -1,0 +1,202 @@
+From e7667b1c798ce4fb23aea9e74f6adbd9ee1d5d46 Mon Sep 17 00:00:00 2001
+From: You-Sheng Yang <vicamo@gmail.com>
+Date: Sat, 19 Aug 2017 20:48:17 +0000
+Subject: [PATCH] fix build on Debian Sid
+
+---
+ CMakeLists.txt                                     |  9 +++++
+ ...libdbus-cpp.install.in => libdbus-cpp5.install} |  0
+ tests/CMakeLists.txt                               | 40 ++++++++--------------
+ 3 files changed, 24 insertions(+), 25 deletions(-)
+ rename debian/{libdbus-cpp.install.in => libdbus-cpp5.install} (100%)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1f5cac9..13b56e2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -75,6 +75,15 @@ if((${DBUS_CPP_SANITIZE} STREQUAL "address") OR (${DBUS_CPP_SANITIZE} STREQUAL "
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=${DBUS_CPP_SANITIZE}")
+ endif()
+ 
++add_library(libgtest STATIC IMPORTED)
++set_property(TARGET libgtest PROPERTY IMPORTED_LOCATION /usr/lib/libgtest.a)
++add_library(libgtest_main STATIC IMPORTED)
++set_property(TARGET libgtest_main PROPERTY IMPORTED_LOCATION /usr/lib/libgtest_main.a)
++add_library(libgmock STATIC IMPORTED)
++set_property(TARGET libgmock PROPERTY IMPORTED_LOCATION /usr/lib/libgmock.a)
++add_library(libgmock_main STATIC IMPORTED)
++set_property(TARGET libgmock_main PROPERTY IMPORTED_LOCATION /usr/lib/libgmock_main.a)
++
+ #####################################################################
+ # Enable code coverage calculation with gcov/gcovr/lcov
+ # Usage:
+diff --git a/debian/libdbus-cpp.install.in b/debian/libdbus-cpp5.install
+similarity index 100%
+rename from debian/libdbus-cpp.install.in
+rename to debian/libdbus-cpp5.install
+diff --git a/tests/CMakeLists.txt b/tests/CMakeLists.txt
+index ecbf692..556d0cd 100644
+--- a/tests/CMakeLists.txt
++++ b/tests/CMakeLists.txt
+@@ -14,14 +14,6 @@
+ #
+ # Authored by: Thomas Voss <thomas.voss@canonical.com>
+ 
+-# Build with system gmock and embedded gtest
+-set (GMOCK_INCLUDE_DIR "/usr/include/gmock/include" CACHE PATH "gmock source include directory")
+-set (GMOCK_SOURCE_DIR "/usr/src/gmock" CACHE PATH "gmock source directory")
+-set (GTEST_INCLUDE_DIR "${GMOCK_SOURCE_DIR}/gtest/include" CACHE PATH "gtest source include directory")
+-
+-add_subdirectory(${GMOCK_SOURCE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/gmock")
+-
+-set(GTEST_BOTH_LIBRARIES gmock gtest gtest_main)
+ find_package(Threads)
+ 
+ add_definitions(-DCORE_DBUS_ENABLE_GOOGLE_TEST_FIXTURE)
+@@ -37,7 +29,6 @@ include_directories(
+ include_directories(
+   ${DBUS_INCLUDE_DIRS}
+   ${Boost_INCLUDE_DIRS}
+-  ${GTEST_INCLUDE_DIRS}
+   ${PROCESS_CPP_INCLUDE_DIRS}
+ )
+ 
+@@ -125,7 +116,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   ${PROCESS_CPP_LIBRARIES}
+ )
+ 
+@@ -138,7 +129,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   ${PROCESS_CPP_LIBRARIES}
+ )
+ 
+@@ -150,7 +141,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   ${PROCESS_CPP_LIBRARIES}
+ )
+ 
+@@ -163,7 +154,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ target_link_libraries(
+@@ -175,7 +166,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ target_link_libraries(
+@@ -187,7 +178,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ target_link_libraries(
+@@ -200,8 +191,7 @@ target_link_libraries(
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+   ${LIBXML2_LIBRARIES}
+-  ${GMOCK_LIBRARY}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ target_link_libraries(
+@@ -213,7 +203,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ target_link_libraries(
+@@ -225,7 +215,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ target_link_libraries(
+@@ -237,7 +227,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ target_link_libraries(
+@@ -249,7 +239,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ target_link_libraries(
+@@ -261,7 +251,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ target_link_libraries(
+@@ -273,7 +263,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ target_link_libraries(
+@@ -284,7 +274,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ target_link_libraries(
+@@ -295,7 +285,7 @@ target_link_libraries(
+   ${CMAKE_THREAD_LIBS_INIT}
+   ${Boost_LIBRARIES}
+   ${DBUS_LIBRARIES}
+-  ${GTEST_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock
+   )
+ 
+ add_test(async_execution_load_test ${CMAKE_CURRENT_BINARY_DIR}/async_execution_load_test)
+-- 
+2.13.3
+
