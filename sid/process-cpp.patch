@@ -1,0 +1,202 @@
+From 8333ef2f33df805646eeb90b6be9fc16715a9aeb Mon Sep 17 00:00:00 2001
+From: You-Sheng Yang <vicamo@gmail.com>
+Date: Sat, 19 Aug 2017 16:44:12 +0000
+Subject: [PATCH] fix build on Debian Sid
+
+---
+ CMakeLists.txt                 |  9 +++++++++
+ debian/libprocess-cpp2.symbols | 35 ++++++++++++++++++-----------------
+ debian/rules                   |  8 --------
+ tests/CMakeLists.txt           | 25 +++++--------------------
+ 4 files changed, 32 insertions(+), 45 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0cf8ff5..5da9656 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -69,6 +69,15 @@ include_directories(
+   ${PROPERTIES_CPP_INCLUDE_DIRS}
+ )
+ 
++add_library(libgtest STATIC IMPORTED)
++set_property(TARGET libgtest PROPERTY IMPORTED_LOCATION /usr/lib/libgtest.a)
++add_library(libgtest_main STATIC IMPORTED)
++set_property(TARGET libgtest_main PROPERTY IMPORTED_LOCATION /usr/lib/libgtest_main.a)
++add_library(libgmock STATIC IMPORTED)
++set_property(TARGET libgmock PROPERTY IMPORTED_LOCATION /usr/lib/libgmock.a)
++add_library(libgmock_main STATIC IMPORTED)
++set_property(TARGET libgmock_main PROPERTY IMPORTED_LOCATION /usr/lib/libgmock_main.a)
++
+ add_subdirectory(doc)
+ add_subdirectory(data)
+ add_subdirectory(include)
+diff --git a/debian/libprocess-cpp2.symbols b/debian/libprocess-cpp2.symbols
+index ecd25c8..ef67463 100644
+--- a/debian/libprocess-cpp2.symbols
++++ b/debian/libprocess-cpp2.symbols
+@@ -8,22 +8,24 @@ libprocess-cpp.so.2 libprocess-cpp2 #MINVER#
+  (c++)"core::posix::ChildProcess::invalid()@Base" 0.0.1+14.04.20140311
+  (c++)"core::posix::ChildProcess::wait_for(core::posix::wait::Flags const&)@Base" 0.0.1+14.04.20140311
+  (c++)"core::posix::ChildProcess::~ChildProcess()@Base" 1.0.0+14.04.20140326.2
++ (c++)"core::posix::ChildProcess::~ChildProcess()@Base" 1.0.0+14.04.20140326.2
++ (c++)"core::posix::ChildProcess::~ChildProcess()@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::posix::this_process::cin()@Base" 1.0.0+14.04.20140326.2
+- (c++)"core::posix::this_process::env::get_or_throw(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.0.0+14.04.20140326.2
+- (c++)"core::posix::this_process::env::set_or_throw(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.0.0+14.04.20140326.2
+- (c++)"core::posix::this_process::env::unset_or_throw(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.0.0+14.04.20140326.2
+- (c++)"core::posix::this_process::env::get(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.0.0+14.04.20140326.2
+- (c++)"core::posix::this_process::env::set(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::error_code&)@Base" 1.0.0+14.04.20140326.2
+- (c++)"core::posix::this_process::env::unset(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::error_code&)@Base" 1.0.0+14.04.20140326.2
+- (c++)"core::posix::this_process::env::for_each(std::function<void (std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)> const&)@Base" 1.0.0+14.04.20140326.2
++ (c++)"core::posix::this_process::env::get_or_throw(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.10.20140718-0ubuntu1
++ (c++)"core::posix::this_process::env::set_or_throw(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.10.20140718-0ubuntu1
++ (c++)"core::posix::this_process::env::unset_or_throw(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.10.20140718-0ubuntu1
++ (c++)"core::posix::this_process::env::get(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 2.0.0+14.10.20140718-0ubuntu1
++ (c++)"core::posix::this_process::env::set(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::error_code&)@Base" 2.0.0+14.10.20140718-0ubuntu1
++ (c++)"core::posix::this_process::env::unset(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::error_code&)@Base" 2.0.0+14.10.20140718-0ubuntu1
++ (c++)"core::posix::this_process::env::for_each(std::function<void (std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)> const&)@Base" 2.0.0+14.10.20140718-0ubuntu1
+  (c++)"core::posix::this_process::cerr()@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::posix::this_process::cout()@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::posix::this_process::parent()@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::posix::this_process::instance()@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::posix::trap_signals_for_process(std::initializer_list<core::posix::Signal>)@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::posix::trap_signals_for_all_subsequent_threads(std::initializer_list<core::posix::Signal>)@Base" 1.0.0+14.04.20140326.2
+- (c++)"core::posix::exec(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, std::map<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&, core::posix::StandardStream const&)@Base" 0.0.1+14.04.20140311
+- (c++)"core::posix::exec(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, std::map<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&, core::posix::StandardStream const&, std::function<void ()> const&)@Base" 1.0.1+14.10.20140522
++ (c++)"core::posix::exec(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&, core::posix::StandardStream const&)@Base" 2.0.0+14.10.20140718-0ubuntu1
++ (c++)"core::posix::exec(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&, core::posix::StandardStream const&, std::function<void ()> const&)@Base" 2.0.0+14.10.20140718-0ubuntu1
+  (c++)"core::posix::fork(std::function<core::posix::exit::Status ()> const&, core::posix::StandardStream const&)@Base" 0.0.1+14.04.20140311
+  (c++)"core::posix::wait::operator|(core::posix::wait::Flags, core::posix::wait::Flags)@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::posix::linux::proc::process::OomScoreAdj::max_value()@Base" 1.0.0+14.04.20140326.2
+@@ -40,20 +42,21 @@ libprocess-cpp.so.2 libprocess-cpp2 #MINVER#
+  (c++)"core::posix::vfork(std::function<core::posix::exit::Status ()> const&, core::posix::StandardStream const&)@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::posix::Process::invalid()@Base" 0.0.1+14.04.20140311
+  (c++)"core::posix::Process::Process(int)@Base" 0.0.1+14.04.20140311
++ (c++)"core::posix::Process::Process(int)@Base" 0.0.1+14.04.20140311
++ (c++)"core::posix::Process::~Process()@Base" 1.0.0+14.04.20140326.2
++ (c++)"core::posix::Process::~Process()@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::posix::Process::~Process()@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::posix::operator&(core::posix::StandardStream, core::posix::StandardStream)@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::posix::operator|(core::posix::StandardStream, core::posix::StandardStream)@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::testing::fork_and_run(std::function<core::posix::exit::Status ()> const&, std::function<core::posix::exit::Status ()> const&)@Base" 1.0.0+14.04.20140326.2
+- (c++|arch=!amd64 !arm64 !ppc64el)"core::testing::CrossProcessSync::try_signal_ready_for(std::chrono::duration<long long, std::ratio<1ll, 1000ll> > const&)@Base" 0.0.1+14.04.20140311
+- (c++|arch=amd64 arm64 ppc64el)"core::testing::CrossProcessSync::try_signal_ready_for(std::chrono::duration<long, std::ratio<1l, 1000l> > const&)@Base" 0.0.1+14.04.20140311
+- (c++|arch=!amd64 !arm64 !ppc64el)"core::testing::CrossProcessSync::wait_for_signal_ready_for(std::chrono::duration<long long, std::ratio<1ll, 1000ll> > const&)@Base" 0.0.1+14.04.20140311
+- (c++|arch=amd64 arm64 ppc64el)"core::testing::CrossProcessSync::wait_for_signal_ready_for(std::chrono::duration<long, std::ratio<1l, 1000l> > const&)@Base" 0.0.1+14.04.20140311
+- (c++)"core::testing::CrossProcessSync::Error::Timeout::~Timeout()@Base" 1.0.0+14.04.20140326.2
+- (c++)"core::testing::CrossProcessSync::CrossProcessSync(core::testing::CrossProcessSync const&)@Base" 1.0.0+14.04.20140326.2
++ (c++)"core::testing::CrossProcessSync::try_signal_ready_for(std::chrono::duration<long, std::ratio<1l, 1000l> > const&)@Base" 0.0.1+14.04.20140311
++ (c++)"core::testing::CrossProcessSync::wait_for_signal_ready_for(std::chrono::duration<long, std::ratio<1l, 1000l> > const&)@Base" 0.0.1+14.04.20140311
++ (c++)"core::testing::CrossProcessSync::CrossProcessSync(core::testing::CrossProcessSync const&)@Base" 0.0.1+14.04.20140311
+  (c++)"core::testing::CrossProcessSync::CrossProcessSync()@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::testing::CrossProcessSync::CrossProcessSync(core::testing::CrossProcessSync const&)@Base" 0.0.1+14.04.20140311
+  (c++)"core::testing::CrossProcessSync::CrossProcessSync()@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::testing::CrossProcessSync::~CrossProcessSync()@Base" 1.0.0+14.04.20140326.2
++ (c++)"core::testing::CrossProcessSync::~CrossProcessSync()@Base" 1.0.0+14.04.20140326.2
+  (c++)"core::testing::CrossProcessSync::operator=(core::testing::CrossProcessSync const&)@Base" 0.0.1+14.04.20140311
+  (c++)"core::testing::operator&(core::testing::ForkAndRunResult, core::testing::ForkAndRunResult)@Base" 0.0.1+14.04.20140311
+  (c++)"core::testing::operator|(core::testing::ForkAndRunResult, core::testing::ForkAndRunResult)@Base" 1.0.0+14.04.20140326.2
+@@ -75,9 +78,7 @@ libprocess-cpp.so.2 libprocess-cpp2 #MINVER#
+  (c++)"typeinfo name for core::posix::ProcessGroup@Base" 0.0.1+14.04.20140311
+  (c++)"typeinfo name for core::posix::Process@Base" 1.0.0+14.04.20140326.2
+  (c++)"typeinfo name for core::testing::CrossProcessSync::Error::Timeout@Base" 0.0.1+14.04.20140311
+- (c++)"vtable for core::posix::SignalTrap@Base" 1.0.0+14.04.20140326.2
+  (c++)"vtable for core::posix::Signalable@Base" 1.0.0+14.04.20140326.2
+- (c++)"vtable for core::posix::ChildProcess::DeathObserver@Base" 0.0.1+14.04.20140311
+  (c++)"vtable for core::posix::ChildProcess@Base" 1.0.0+14.04.20140326.2
+  (c++)"vtable for core::posix::ProcessGroup@Base" 0.0.1+14.04.20140311
+  (c++)"vtable for core::posix::Process@Base" 1.0.0+14.04.20140326.2
+diff --git a/debian/rules b/debian/rules
+index 769a226..90c44d1 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -5,13 +5,5 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL=4
+ 
+ include /usr/share/dpkg/default.mk
+ 
+-# Explicitly selecting a G{CC,++}-version here to avoid accidental
+-# ABI breaks introduced by toolchain updates.
+-export CC=$(DEB_HOST_GNU_TYPE)-gcc-4.9
+-export CXX=$(DEB_HOST_GNU_TYPE)-g++-4.9
+-
+ %:
+ 	dh $@ --fail-missing
+-
+-override_dh_auto_configure:
+-	dh_auto_configure -- -DCMAKE_C_COMPILER=$(CC) -DCMAKE_CXX_COMPILER=$(CXX)
+diff --git a/tests/CMakeLists.txt b/tests/CMakeLists.txt
+index 764a875..3708366 100644
+--- a/tests/CMakeLists.txt
++++ b/tests/CMakeLists.txt
+@@ -14,23 +14,8 @@
+ #
+ # Authored by: Thomas Voss <thomas.voss@canonical.com>
+ 
+-# Build with system gmock and embedded gtest
+-set (GMOCK_INCLUDE_DIR "/usr/include/gmock/include" CACHE PATH "gmock source include directory")
+-set (GMOCK_SOURCE_DIR "/usr/src/gmock" CACHE PATH "gmock source directory")
+-set (GTEST_INCLUDE_DIR "${GMOCK_SOURCE_DIR}/gtest/include" CACHE PATH "gtest source include directory")
+-set (GMOCK_BOTH_LIBRARIES gmock gmock_main)
+-add_subdirectory(${GMOCK_SOURCE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/gmock")
+-
+-#set (OLD_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+-# Don't treat warnings as errors in 3rd_party/{gmock,cucumber-cpp}
+-#string (REPLACE " -Werror " " " CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+-#find_package(Gtest REQUIRED)
+-include_directories(${GMOCK_INCLUDE_DIR} ${GTEST_INCLUDE_DIR})
+-#set (CMAKE_CXX_FLAGS ${OLD_CMAKE_CXX_FLAGS})
+-
+ include_directories(
+   ${CMAKE_SOURCE_DIR}/src
+-  ${GTEST_INCLUDE_DIR}
+ )
+ 
+ add_executable(
+@@ -68,7 +53,7 @@ target_link_libraries(
+   process-cpp
+ 
+   ${CMAKE_THREAD_LIBS_INIT}
+-  ${GMOCK_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock libgmock_main
+ )
+ 
+ target_link_libraries(
+@@ -77,7 +62,7 @@ target_link_libraries(
+   process-cpp
+ 
+   ${CMAKE_THREAD_LIBS_INIT}
+-  ${GMOCK_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock libgmock_main
+ )
+ 
+ target_link_libraries(
+@@ -86,7 +71,7 @@ target_link_libraries(
+   process-cpp
+ 
+   ${CMAKE_THREAD_LIBS_INIT}
+-  ${GMOCK_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock libgmock_main
+ )
+ 
+ target_link_libraries(
+@@ -95,7 +80,7 @@ target_link_libraries(
+   process-cpp
+ 
+   ${CMAKE_THREAD_LIBS_INIT}
+-  ${GMOCK_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock libgmock_main
+ )
+ 
+ target_link_libraries(
+@@ -104,7 +89,7 @@ target_link_libraries(
+   process-cpp
+ 
+   ${CMAKE_THREAD_LIBS_INIT}
+-  ${GMOCK_BOTH_LIBRARIES}
++  libgtest libgtest_main libgmock libgmock_main
+ )
+ 
+ add_test(posix_process_test ${CMAKE_CURRENT_BINARY_DIR}/posix_process_test)
+-- 
+2.13.3
+
