@@ -16,14 +16,6 @@ env:
 branches:
   only: master
 
-addons:
-  apt:
-    sources:
-    - sourceline: 'deb http://archive.ubuntu.com/ubuntu/ devel universe'
-    packages:
-    - binfmt-support
-    - qemu-user-static
-
 script:
 - docker build -t ${TRAVIS_REPO_SLUG%/*}/anbox-devel:$SUITE $SUITE
 - docker images
