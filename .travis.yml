@@ -4,21 +4,17 @@ services:
 
 env:
   matrix:
+  - SUITE=artful
+  - SUITE=buster
   - SUITE=sid
+  - SUITE=stretch
   - SUITE=xenial
+  - SUITE=zesty
   global:
   - secure: "tdwPN9tRtbZtoO6LND0jKdmAfLqv/6k5rVDYsSeNeA1AlSOloF5XiERTGQnG4KE5TxmHT4Fmzc5lEWzA6jQ5CqqoyuoDgTWHOeDfX0Fq4hgwXHoCdqeGNhgy/GFeZ+OtpYGJxJA1w9/gPnrPSqTe2Wcv6/f1lumfxwfWLzUm9U3tOtw9k1kcRU7IGQlEBERx9H0tYNKdHpZglMtG1gHjXXS94rQZyDpUmlTQn4jkBdhrxUCNH6T2dlmwlEB1pEqBzYh43Mg4wXMcJYeC0YcD7mSwXmlwWVun5V+NHtXHigk8iU3lzrjCqfCNrBBDjE/gaCZSueHsn05zYK+Xble/yfv9i2fdLoRvnSCxZSnJcKuUxaMK+RCWhcN5Vx1W3AklXDBmE/Imsf7evdMu3/wZ/mSeDbIZCIrTIXflSz9db4PfaumtDaXJ9Z/lhurb/V7YQXZb4AzHJyLtX09GDBrxk7l9w9y22NOKa+Un1Bp1cXPlt6EZp7AE7Vr0rKCV9a7AYBepSQhNXrxK0/yT/XPvGnPfoVr2/SYWgveak2MAShYoMPDk1tOwQNIOVWbV1dtGbTWvry2iEsi0kcvBsLP7/M0UbYRLv71CFDOGgaqgw1qIAibXm3Ze3fu5kUoerRb2bfs/k0YLNOgEESzrDMB5Eg077/I6QNOmMTwvcm5UbcM="
 
 branches:
   only: master
-
-addons:
-  apt:
-    sources:
-    - sourceline: 'deb http://archive.ubuntu.com/ubuntu/ devel universe'
-    packages:
-    - binfmt-support
-    - qemu-user-static
 
 script:
 - docker build -t ${TRAVIS_REPO_SLUG%/*}/anbox-devel:$SUITE $SUITE
