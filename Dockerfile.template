@@ -1,7 +1,7 @@
 # GENERATED FROM Dockerfile.template. DO NOT EDIT.
-FROM buildpack-deps:xenial
+FROM buildpack-deps:@SUITE@
 
-RUN (echo "deb [trusted=yes] http://dl.bintray.com/vicamo/ppa xenial contrib" | \
+RUN (echo "deb [trusted=yes] http://dl.bintray.com/vicamo/ppa @SUITE@ contrib" | \
 		tee /etc/apt/sources.list.d/bintray.list) \
 	&& apt-get update --quiet \
 	&& apt-get install --no-install-recommends --yes --allow-unauthenticated \
