@@ -5,6 +5,7 @@ services:
 env:
   matrix:
   - SUITE=artful
+  - SUITE=bionic
   - SUITE=buster
   - SUITE=sid
   - SUITE=stretch
